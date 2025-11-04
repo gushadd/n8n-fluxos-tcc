@@ -1,0 +1,1080 @@
+{
+  "name": "Cenário 2",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "cc6c40d3-e4b5-4b62-9113-fe2c2720368e",
+      "name": "Telegram Trigger",
+      "webhookId": "031be575-dde8-4f97-8472-59ee37104fb9",
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        160
+      ],
+      "id": "9800c790-3064-4fbb-b32a-5c97e07b82ce",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "uudgVexPy2IFFMaZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fd86b11c-7079-4298-88d9-65d53b7185fa",
+              "name": "chatId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "6e312cad-4834-4d59-88f8-d5f9f36d46fa",
+              "name": "message",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "01a01011-944d-41e7-a0c7-6ae76c7d4aa0",
+              "name": "from_id",
+              "value": "={{ $json.message.from.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        0
+      ],
+      "id": "11f8054f-14b3-49cf-9ec2-ad40089ae486",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Crie uma mensagem de boas-vindas calorosa. Apresente-se como Clô e pergunte de forma aberta como você pode ajudar a pessoa a encontrar o look perfeito hoje.",
+        "options": {
+          "systemMessage": "Você é a Clô, a assistente de estilo e anfitriã virtual da nossa loja de roupas. Sua personalidade é alegre, casual e muito prestativa, como se estivesse conversando com uma amiga que entende tudo de moda.\n\n- Use uma linguagem informal e acolhedora.\n- Use emojis (✨, 💖, 👚, etc.) para deixar a conversa mais leve e visual.\n- Seu objetivo principal é fazer com que a pessoa se sinta bem-vinda e ajudá-la a encontrar o que procura.\n- Mantenha as mensagens relativamente curtas e fáceis de ler."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        -272
+      ],
+      "id": "8a6f771d-8a1f-4192-ab6d-79faf8a0da98",
+      "name": "Clô boas vindas"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        -128
+      ],
+      "id": "11d062c2-c740-419b-89a0-a995b701285c",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "uudgVexPy2IFFMaZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a2cd4c50-88d0-49c1-bdc0-851fc08baf18",
+              "name": "newState",
+              "value": "inicio",
+              "type": "string"
+            },
+            {
+              "id": "abaf9193-ad99-4fbe-ba55-6bcd760595b8",
+              "name": "lastBotResponse",
+              "value": "={{ $json.result.text }}",
+              "type": "string"
+            },
+            {
+              "id": "1d13370a-1663-4112-a890-bd04898b76d4",
+              "name": "lastUserMessage",
+              "value": "={{ $('Edit Fields').item.json.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2240,
+        -272
+      ],
+      "id": "16c8e246-bb86-46ef-b16f-4e92796d3552",
+      "name": "Anotar Estado: inicio"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Edit Fields').item.json.chatId }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2064,
+        -272
+      ],
+      "id": "4d7bc952-7c70-4812-b83b-f234fa704dd3",
+      "name": "Send a text message",
+      "webhookId": "65c2c2f4-4d33-48e6-96ac-e814e5f8bf4c",
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "estadoCompleto",
+        "key": "=user:{{ $('Edit Fields').item.json.chatId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        992,
+        0
+      ],
+      "id": "84b3e678-e04b-4c3c-9df0-30cd936e0fd0",
+      "name": "Ler Estado do Usuario",
+      "credentials": {
+        "redis": {
+          "id": "6NTwK1kxYF9NeoE1",
+          "name": "Credencial_Redis_Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o objeto JSON do nó anterior (\"Anotar Estado: inicio\")\nconst estadoObjeto = $input.item.json;\n\n// Converte este objeto inteiro em uma única string de texto.\nconst estadoCompletoString = JSON.stringify(estadoObjeto);\n\n// Retorna um novo objeto com uma única variável de saída.\n// Vamos chamá-la de \"estado_completo_string\" para ficar bem claro.\nreturn {\n  estado_completo_string: estadoCompletoString\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2448,
+        -272
+      ],
+      "id": "11e61651-66ea-4328-ac4f-27db64057b4a",
+      "name": "Preparar Estado para Redis"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=user:{{ $('Edit Fields').first().json.chatId }}",
+        "value": "={{ $json.estado_completo_string }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2960,
+        -160
+      ],
+      "id": "98be820e-c573-4156-99ae-9c776a705b7a",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "6NTwK1kxYF9NeoE1",
+          "name": "Credencial_Redis_Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Crie uma introdução amigável e convidativa para a seleção de produtos abaixo. Siga o formato dos exemplos.\n\n---\nLISTA DE PRODUTOS FORNECIDA:\n{{ JSON.stringify($('Agrupar').item.json.produtos) }}\n---\n\nExemplo 1 (se a lista tiver várias camisetas):\nINTRODUÇÃO: Boaa! Preparei uma seleção com as nossas camisetas mais estilosas que são a cara da estação. Tenho certeza que você vai amar! Olha só:\n\nExemplo 2 (se a lista for variada):\nINTRODUÇÃO: Eba! Separei aqui umas peças super especiais da nossa coleção que estão fazendo o maior sucesso. Prepare o coração! ✨ Confira:\n---\n\nAgora, crie a introdução para a LISTA DE PRODUTOS fornecida acima.\n\nINTRODUÇÃO:",
+        "options": {
+          "systemMessage": "Você é Clô, uma assistente de estilo amigável e casual. Sua tarefa é criar uma ÚNICA frase de introdução curta e animada para apresentar uma SELEÇÃO DE PRODUTOS para o cliente.\n\nAnalise a lista de produtos fornecida para entender o \"clima\" da seleção.\n- Se a lista tiver muitas peças de um mesmo tipo (ex: várias camisetas), você pode mencioná-las.\n- Se a lista for bem variada, diga que é uma seleção especial com os itens favoritos da loja.\n\nUse emojis que combinem, mas NUNCA use emoticons baseados em texto como '<3'."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2752,
+        272
+      ],
+      "id": "76f4cbdb-147a-4651-9596-28ac923efce6",
+      "name": "Clo Produtos"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        416
+      ],
+      "id": "4372e61e-8549-44ae-821a-04d04c92f239",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "uudgVexPy2IFFMaZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Estado da Conversa Anterior:**\n{{ $json.estado_completo_string || 'Nenhum' }}\n\n**Nova Mensagem do Usuário:**\n{{ $('Edit Fields').item.json.message }}",
+        "options": {
+          "systemMessage": "Você é um roteador de intenção de alta precisão. Sua tarefa é analisar o ESTADO da conversa e a MENSAGEM do usuário para decidir o próximo passo, retornando UMA ÚNICA PALAVRA como resposta.\n\nAs únicas respostas permitidas são:\n- \"ver_produtos\"\n- \"escolher_categoria\"\n- \"ver_produtos_por_categoria\"\n- \"boas_vindas\"\n\n---\n**REGRAS DE ROTEAMENTO:**\n\n**REGRA 1: Se o \"Estado da Conversa Anterior\" contiver `newState: \"categoria\"`**\nIsso é o mais importante. Significa que o bot perguntou \"Qual categoria você quer ver?\" e a \"Nova Mensagem do Usuário\" é a RESPOSTA do usuário (ex: \"Camisetas\", \"Quero ver os moletons\").\n- Sua ÚNICA tarefa é reconhecer que o usuário fez uma escolha.\n- Responda APENAS com a palavra: `ver_produtos_por_categoria`\n\n**REGRA 2: Se o \"Estado da Conversa Anterior\" for \"Nenhum\" (uma nova conversa)**\nClassifique a \"Nova Mensagem do Usuário\" normalmente:\n- `ver_produtos`: Se for um interesse GERAL em produtos, catálogo ou novidades, SEM especificar um tipo.\n- `escolher_categoria`: Se o usuário PERGUNTAR QUAIS SÃO as categorias ou tipos de produto disponíveis (ex: \"o que vcs tem?\", \"quais os tipos de roupa?\").\n- `boas_vindas`: Se for APENAS uma saudação.\n\n---\n**FORMATO DA RESPOSTA:**\n\nNÃO use JSON. NÃO use formatação. NÃO adicione explicações. Apenas a palavra-chave.\n\n---\n**EXEMPLOS:**\n\n**Exemplo COM ESTADO:**\n* Estado da Conversa Anterior: `{\"newState\":\"categoria\", ...}`\n* Nova Mensagem do Usuário: \"Camisetas\"\n* Sua Resposta:\nver_produtos_por_categoria\n\n**Exemplo SEM ESTADO (Nova Conversa):**\n* Estado da Conversa Anterior: Nenhum\n* Nova Mensagem do Usuário: \"Quais categorias vocês têm?\"\n* Sua Resposta:\nescolher_categoria\n\n**Exemplo SEM ESTADO (Nova Conversa):**\n* Estado da Conversa Anterior: Nenhum\n* Nova Mensagem do Usuário: \"Gostaria de ver as camisetas\"\n* Sua Resposta:\nver_produtos_por_categoria"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "505a3421-15a4-4379-878c-ba7328ecee48",
+      "name": "Classificador de Intenção"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3000/produtos",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2112,
+        272
+      ],
+      "id": "570bb1c1-144f-4857-ba8c-5f4aca41c7ae",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =================================================================\n// 1. BUSCAR DADOS DE ENTRADA E DE OUTROS NÓS\n// =================================================================\n\n// Pega TODOS os produtos que vieram do nó 'HTTP Request'.\nconst todosOsProdutos = $items();\n\n// Pega a categoria JÁ LIMPA E EXTRAÍDA do nosso novo nó Gemini.\nconst categoriaEscolhida = $('Extrair Categoria').first().json.output;\n\n// Busca o Chat ID do início do fluxo, também pegando o PRIMEIRO item daquele nó.\nconst chatId = $('Edit Fields').first().json.chatId;\n\n\n// =================================================================\n// 2. FILTRAR OS PRODUTOS PELA CATEGORIA ESCOLHIDA\n// =================================================================\n\nconst produtosFiltrados = todosOsProdutos.filter(item => {\n  // Verificação de segurança para evitar erros se um produto não tiver categoria\n  if (!item.json.categoria) {\n    return false;\n  }\n  const categoriaDoProduto = item.json.categoria;\n  \n  return categoriaDoProduto.trim().toLowerCase() === categoriaEscolhida.trim().toLowerCase();\n});\n\n\n// =================================================================\n// 3. PREPARAR OS DADOS FILTRADOS PARA A IA\n// =================================================================\n\nconst produtosResumidos = produtosFiltrados.map(item => {\n  return {\n    nome: item.json.nome,\n    descricao: item.json.descricao,\n    preco: item.json.preco,\n    categoria: item.json.categoria,\n    imagem_url: item.json.imagem_url\n  };\n});\n\n\n// =================================================================\n// 4. MONTAR E RETORNAR O ITEM FINAL\n// =================================================================\n\nconst aggregatedItem = {\n  json: {\n    produtos: produtosResumidos,\n    chatId: chatId\n  }\n};\n\n// Retorna apenas este item único com os dados limpos e prontos.\nreturn [aggregatedItem];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2320,
+        272
+      ],
+      "id": "b8054d58-0268-43db-becb-e3a3eca6fb65",
+      "name": "Agrupar"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega a introdução criativa que a IA \"Clô Produtos\" acabou de gerar\nconst introDaIA = $('Clo Produtos').item.json.output;\n\n// Pega os dados dos produtos do nó \"Agrupar\"\nconst produtos = $('Agrupar').item.json.produtos;\n\n\n// Cria um array que vai conter todas as mensagens que vamos enviar\nconst outputItems = [];\n\n// 1. Adiciona a primeira mensagem: a introdução da IA\noutputItems.push({\n  json: {\n    // Apenas texto, sem foto\n    text_message: introDaIA\n  }\n});\n\n// 2. Loop para criar uma mensagem com FOTO para cada produto\nif (produtos && produtos.length > 0) {\n  for (const produto of produtos) {\n    \n    // Formata o preço para o padrão brasileiro (R$)\n    const precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(produto.preco);\n\n    // Monta a LEGENDA da foto com tags HTML que o Telegram entende\n    let legenda = `<b>${produto.nome}</b>\\n\\n`;\n    legenda += `<i>${produto.descricao}</i>\\n\\n`;\n    legenda += `<b>Preço:</b> ${precoFormatado}`;\n\n    // Adiciona um item à lista de saída, formatado para enviar uma FOTO com LEGENDA\n    outputItems.push({\n      json: {\n        photo_url: produto.imagem_url, // A URL que você adicionou no JSON\n        caption: legenda\n      }\n    });\n  }\n\n\n\n} else {\n  // Caso não encontre produtos\n  const semProdutos = \"Puxa, não encontrei produtos para essa categoria no momento. 😕\";\n  outputItems.push({\n    json: {\n      text_message: semProdutos\n    }\n  });\n}\n\n// Retorna a LISTA de mensagens a serem enviadas\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        272
+      ],
+      "id": "301d709a-bb6f-4623-9136-8f2138122be2",
+      "name": "Formatar Lista de Produtos"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bc4f70cd-50e4-484c-9ed4-347ef38af9b8",
+              "leftValue": "={{ $json.photo_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3200,
+        272
+      ],
+      "id": "ecc53ac9-dd03-4920-a5d4-1aa2c87c6566",
+      "name": "Photo IF"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Agrupar').item.json.chatId }}",
+        "file": "={{ $json.photo_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.caption }}",
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3456,
+        352
+      ],
+      "id": "282546dc-57cb-4fb6-9b7b-a4877ee2cf3d",
+      "name": "Send a photo message",
+      "webhookId": "b19db22a-3685-4d3c-ac36-fd678d8f7e93",
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Agrupar').item.json.chatId }}",
+        "text": "={{ $json.text_message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3456,
+        192
+      ],
+      "id": "749ff963-df03-4541-8cc6-d336d3029aeb",
+      "name": "Enviar Mensagem",
+      "webhookId": "f1dde3a1-6457-4cb1-bca1-cd987371ceab",
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "boas_vindas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "eda34f22-5249-4d1e-ab8a-137ce943a0b9"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Inicio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "84a9beb0-bd48-4bff-bd4a-f8bf154ff531",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "escolher_categoria",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Categoria"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "19910549-69fb-48f2-bad4-d46d38d2986d",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "ver_produtos_por_categoria",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Produtos"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1488,
+        -16
+      ],
+      "id": "7adb243b-81d8-47af-b767-0d07f78d6861",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3000/categorias",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1776,
+        0
+      ],
+      "id": "7dbbf19e-e652-4441-86f8-7de87b5f3430",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =================================================================\n// 1. PEGAR DADOS DE NÓS ANTERIORES\n// =================================================================\n\n// Pega os dados do nó HTTP Request\nconst categorias = items.map(item => item.json);\n\n// Pega o Chat ID do nó inicial do fluxo (o gatilho do Telegram)\nconst chatId = $('Edit Fields').first().json.chatId;\n\n\n// =================================================================\n// 2. PROCESSAR E FORMATAR A MENSAGEM\n// =================================================================\n\n// Extrai apenas os nomes das categorias para uma lista\nconst nomesDasCategorias = categorias.map(categoria => categoria.nome);\n\n// Monta a mensagem final usando tags HTML para formatação\nconst messageText = `<b>Temos as seguintes categorias na loja:</b>\\n\\n- ${nomesDasCategorias.join('\\n- ')}\\n\\n<i>Qual delas você gostaria de ver?</i>`;\n\n\n// =================================================================\n// 3. RETORNAR OS DADOS PARA O PRÓXIMO NÓ\n// =================================================================\n\n// Retorna um objeto JSON com tudo que o próximo nó precisa\nreturn {\n  json: {\n    chatId: chatId,\n    messageText: messageText,\n    options: {\n      parse_mode: 'HTML' // Define o modo de formatação para HTML\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1984,
+        0
+      ],
+      "id": "6cdb9290-3d11-49bc-a28c-8d24f03c78e1",
+      "name": "Separador de categorias"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Separador de categorias').item.json.chatId }}",
+        "text": "={{ $('Separador de categorias').item.json.messageText }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2224,
+        0
+      ],
+      "id": "d6ba36ce-b313-461c-81ea-6de21d91ab2a",
+      "name": "Send a text message1",
+      "webhookId": "25bcd6cc-85b6-4ea0-adc2-f5aab95277fd",
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28414a37-e42b-4861-9bd6-5bc7e3641679",
+              "name": "newState",
+              "value": "categoria",
+              "type": "string"
+            },
+            {
+              "id": "05814b01-9a2f-42b3-935a-2098a0ff8e4c",
+              "name": "lastBotResponse",
+              "value": "={{ $json.result.text }}",
+              "type": "string"
+            },
+            {
+              "id": "68b79967-b09d-4024-b609-6aeba6a6e31e",
+              "name": "lastUserMessage",
+              "value": "={{ $('Edit Fields').first().json.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        0
+      ],
+      "id": "803274e9-9583-4fd1-9511-257346bc2a3e",
+      "name": "Anotar Estado: Categoria"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o objeto JSON do nó anterior (\"Anotar Estado: inicio\")\nconst estadoObjeto = $input.item.json;\n\n// Converte este objeto inteiro em uma única string de texto.\nconst estadoCompletoString = JSON.stringify(estadoObjeto);\n\n// Retorna um novo objeto com uma única variável de saída.\n// Vamos chamá-la de \"estado_completo_string\" para ficar bem claro.\nreturn {\n  estado_completo_string: estadoCompletoString\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2624,
+        0
+      ],
+      "id": "479b6c4a-f2a8-4708-9cf5-ce2c94677cdb",
+      "name": "Preparar Estado para Redis1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        496
+      ],
+      "id": "839c6841-ec2e-49c4-be0a-7782f35ac7c9",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "uudgVexPy2IFFMaZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.message }}",
+        "options": {
+          "systemMessage": "Você é um extrator de categoria ultra-rápido. Sua tarefa é mapear as palavras-chave da mensagem do usuário para uma ÚNICA categoria de saída, de acordo com a lista abaixo.\n\nMAPEAMENTO DIRETO (INPUT -> OUTPUT):\n\n[camiseta, camisa, blusa, t-shirt] -> Camisetas\n\n[regata, regatas] -> Regata\n\n[moletom, moletons, casaco, blusão] -> Moletom\n\n[bermuda, bermudas, short, shorts] -> Bermuda\n\n[calça, calças] -> Calça\n\nREGRAS:\n\nEncontre a primeira palavra-chave da mensagem do usuário na lista de INPUT.\n\nResponda IMEDIATAMENTE com o OUTPUT correspondente.\n\nSe a mensagem não contiver NENHUMA das palavras da lista, responda APENAS com a palavra: Nenhuma.\n\nResponda APENAS com a palavra de saída. Nenhuma outra palavra ou explicação.\n\nExemplos:\n\nUsuário: \"Quero ver as camisas\" Sua Resposta: Camisetas\n\nUsuário: \"vcs tem short?\" Sua Resposta: Bermuda\n\nUsuário: \"tem sapato?\" Sua Resposta: Nenhuma\nPor que este prompt é mais rápido e ainda mais robusto?\nMenos \"Tokens\" para Processar: Ele é significativamente mais curto. A IA lê e processa menos texto, resultando em uma resposta quase instantânea.\n\nLógica de Mapeamento Direto: A estrutura [lista de inputs] -> output é uma das formas mais eficientes de instruir um modelo de linguagem. Ele não precisa \"pensar\" ou \"interpretar regras complexas\"; ele apenas executa uma tarefa de correspondência.\n\nRobustez Mantida: Todos os sinônimos e plurais que definimos antes ainda estão lá, garantindo que as variações nas mensagens dos usuários sejam capturadas corretamente.\n\nClareza Absoluta: As regras são numeradas e imperativas (\"Encontre\", \"Responda\"), o que remove qualquer ambiguidade e acelera a \"tomada de decisão\" da IA."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1648,
+        336
+      ],
+      "id": "2321366d-54eb-4914-b379-43c3047f402d",
+      "name": "Extrair Categoria"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5071b01b-7415-4dda-ba00-29bf02b7a736",
+              "leftValue": "={ $('Extrair Categoria').first().json.output }}",
+              "rightValue": "Nenhuma",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        336
+      ],
+      "id": "e4944485-d25d-43e0-89b7-57bf27c708f0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o Chat ID do nó inicial do fluxo (o gatilho do Telegram)\nconst chatId = $('Edit Fields').first().json.chatId;\n\nconst respostas = [\n    \"Hmm, não encontrei essa opção. Pode tentar uma da lista que enviei?\",\n    \"Opção inválida. Por favor, escolha uma das categorias da lista anterior.\",\n    \"Desculpe, não entendi. Você poderia escolher uma das categorias que mostrei?\"\n];\n\n// Sorteia uma resposta aleatoriamente\nconst respostaEscolhida = respostas[Math.floor(Math.random() * respostas.length)];\n\nreturn [{ json: { texto: respostaEscolhida,\n                 chatId: chatId } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2112,
+        464
+      ],
+      "id": "47e2e072-e61d-42aa-831e-b7d342483f88",
+      "name": "Random Resposta"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Random Resposta').item.json.chatId }}",
+        "text": "={{ $json.texto }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2304,
+        464
+      ],
+      "id": "b732fa28-ab66-40c8-90da-aca112c5dbc1",
+      "name": "Mensagem de Erro",
+      "webhookId": "de91f081-ba23-4bd6-b26c-a71c6289fb8a",
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=subscription:{{ $('Extrair Categoria').first().json.output }}:{{ $('Edit Fields').first().json.chatId }}",
+        "value": "1"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2528,
+        272
+      ],
+      "id": "f419c32b-2b46-4cbf-bdcb-b8feed0d64cf",
+      "name": "Salvar Interesse na Categoria",
+      "credentials": {
+        "redis": {
+          "id": "6NTwK1kxYF9NeoE1",
+          "name": "Credencial_Redis_Local"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classificador de Intenção",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Ler Estado do Usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Clô boas vindas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clô boas vindas": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Anotar Estado: inicio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler Estado do Usuario": {
+      "main": [
+        [
+          {
+            "node": "Classificador de Intenção",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anotar Estado: inicio": {
+      "main": [
+        [
+          {
+            "node": "Preparar Estado para Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Estado para Redis": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Clo Produtos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classificador de Intenção": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Agrupar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agrupar": {
+      "main": [
+        [
+          {
+            "node": "Salvar Interesse na Categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clo Produtos": {
+      "main": [
+        [
+          {
+            "node": "Formatar Lista de Produtos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Lista de Produtos": {
+      "main": [
+        [
+          {
+            "node": "Photo IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Photo IF": {
+      "main": [
+        [
+          {
+            "node": "Enviar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Mensagem": {
+      "main": [
+        []
+      ]
+    },
+    "Send a photo message": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Clô boas vindas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extrair Categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Separador de categorias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separador de categorias": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Anotar Estado: Categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anotar Estado: Categoria": {
+      "main": [
+        [
+          {
+            "node": "Preparar Estado para Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Estado para Redis1": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extrair Categoria",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair Categoria": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Random Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Random Resposta": {
+      "main": [
+        [
+          {
+            "node": "Mensagem de Erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar Interesse na Categoria": {
+      "main": [
+        [
+          {
+            "node": "Clo Produtos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d040b551-8fb5-43cc-9241-0a68258de0f8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "44631d0647de0aaa5604bf85f80cdbc72ba3bba08c629494f91f6ce3dccc1ed5"
+  },
+  "id": "CfWrabxoe8dqCkkd",
+  "tags": []
+}

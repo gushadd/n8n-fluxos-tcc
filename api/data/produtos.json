@@ -2,61 +2,81 @@
   {
     "idProduto": 1,
     "nome": "Camiseta Box",
+    "categoria": "Camisetas",
     "descricao": "Camiseta Box Tech Eco oversized faz parte da nossa nova linha Unknown. Ela tem um comprimento mais curto, torax mais largo e o ombro caído, clássico da modelagem oversized. Gola levemente fechada. O diferencial dela é o caimento perfeito do tecido de viscose mais a modelagem mais curta. Ela é confeccionada em viscose Lenzing Ecovero, garantindo um caimento e um toque premium, com gramatura pesada de 300g/m². Não é uma peça quente, ideal para qualquer dia. Não desbota com o tempo. Anti-odor. Maciez extrema. Caimento perfeito. Design exclusivo.",
-    "preco": 139.9
+    "preco": 139.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 2,
     "nome": "Camiseta Oversized",
+    "categoria": "Camisetas",
     "descricao": "A Camiseta Aleska é feita em 100% algodão, com uma trama única em formato de pequenos quadrados que evocam a fluidez do oceano. Modelagem oversized, visual moderno e despojado, com gramatura de 230 g/m². Leve, respirável e confortável. Bordado sofisticado que traduz a essência da sorte.",
-    "preco": 159.9
+    "preco": 159.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 3,
     "nome": "Camiseta Alongada",
+    "categoria": "Camisetas",
     "descricao": "A Camiseta Oversized Masculina de Algodão Premium que Não Encolhe oferece conforto, estilo e durabilidade. Com design moderno e corte oversized, proporciona um caimento solto e despojado. Feita com algodão puro e premium, proporciona maciez e resistência, mantendo a forma e cor após muitas lavagens.",
-    "preco": 149.9
+    "preco": 149.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 4,
     "nome": "Regata gola V",
+    "categoria": "Regata",
     "descricao": "A Regata Masculina Gola V combina estilo e funcionalidade. Feita com algodão e elastano, oferece toque macio, elasticidade e ajuste impecável. Design moderno com gola V e detalhes em corte a laser. Versátil para praia, churrasco ou look urbano casual.",
-    "preco": 129.9
+    "preco": 129.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 5,
     "nome": "Moletom Gola Alta",
+    "categoria": "Moletom",
     "descricao": "O Casaco Moletom Gola Alta Oversized é ideal para o inverno. Gola alta para proteção extra e corte oversized para visual moderno. Confeccionado em moletom felpado 100% algodão, é macio, quentinho e durável. Combina com diversos looks.",
-    "preco": 229.9
+    "preco": 229.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 6,
     "nome": "Moletom",
+    "categoria": "Moletom",
     "descricao": "Moletom com modelagem blusão e caimento solto. Confortável e estiloso, com toque suave e quentinho. Tecido de alta qualidade e cor Bege Marfim. Moda funcional com estética refinada. Composição: 84% algodão, 13% poliéster, 3% elastano.",
-    "preco": 199.9
+    "preco": 199.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 7,
     "nome": "Bermuda",
+    "categoria": "Bermuda",
     "descricao": "Bermuda em sarja com elastano. Bolsos faca frontais e bolsos traseiros embutidos com botões. Tecido flexível e versátil, ideal com camisas ou camisetas. Pré-encolhida. Composição: 98% Algodão BCI, 2% Elastano. Etiqueta em cetim para conforto.",
-    "preco": 179.9
+    "preco": 179.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 8,
     "nome": "Bermuda Alfaiatada",
+    "categoria": "Bermuda",
     "descricao": "Bermuda com modelagem reta e caimento solto. Tecido leve, durável e que seca rápido. Composição: 93% Poliéster Reciclado, 7% Elastano. Possui bolsos com zíper, é confortável e não amassa facilmente. Ideal para looks casuais.",
-    "preco": 189.9
+    "preco": 189.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 9,
     "nome": "Calça Reta",
+    "categoria": "Calça",
     "descricao": "Calça de sarja com algodão egípcio e elastano. Modelagem reta com bolsos faca e traseiros embutidos. Cores vivas e durabilidade garantidas. Sarja Premium, com toque macio e costuras reforçadas. Composição: 97% Algodão Egípcio, 3% Elastano.",
-    "preco": 239.9
+    "preco": 239.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   },
   {
     "idProduto": 10,
     "nome": "Calça Jogger com Amarração",
+    "categoria": "Calça",
     "descricao": "Calça jogger masculina feita em sarja com algodão e elastano. Cós elástico com cordão de amarração, bolsos faca, bolsos cargo e posteriores. Barra com punho elástico. Ideal para o dia a dia com estilo e conforto. Composição: 98% Algodão, 2% Elastano.",
-    "preco": 309.9
+    "preco": 309.9,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
   }
 ]

@@ -1,0 +1,26 @@
+meta {
+  name: Teste
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/produtos
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "nome": "Camiseta Nível seses43 para testes segunda vez",
+    "categoria": "Camisetas",
+    "descricao": "Este é um produto de teste para verificar a integração com o n8n.",
+    "preco": 2399.99,
+    "imagem_url": "https://raw.githubusercontent.com/DiiogoLR/Imagens/refs/heads/main/bruxo.jpg"
+    }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

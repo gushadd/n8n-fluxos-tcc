@@ -1,0 +1,273 @@
+{
+  "name": "Cenário 3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a4f5d090-4382-4e89-8f7c-65e942cc935d",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        -48
+      ],
+      "id": "47fc3369-9dcf-4d33-8cf5-b9a54547033d",
+      "name": "Webhook",
+      "webhookId": "a4f5d090-4382-4e89-8f7c-65e942cc935d"
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=telegram_user_*"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -432
+      ],
+      "id": "8d5c59eb-49b4-4696-aaf2-15b680d52a93",
+      "name": "Chama todos Usuários",
+      "credentials": {
+        "redis": {
+          "id": "6NTwK1kxYF9NeoE1",
+          "name": "Credencial_Redis_Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Crie uma legenda de no máximo 2-3 frases para o lançamento do produto abaixo. Foque em criar desejo e use emojis que combinem com o estilo da peça.\n\n- **Nome:** {{ $('Webhook').item.json.body.nome }}\n- **Descrição:** {{ $('Webhook').item.json.body.descricao }}",
+        "options": {
+          "systemMessage": "Você é Clô, a cool hunter e assistente de estilo oficial da marca de streetwear 'ClotheStore'. Sua identidade é amigável, antenada e cheia de personalidade.\n\nSua missão é criar uma mensagem de marketing curta e irresistível para o Telegram, anunciando o LANÇAMENTO de UMA ÚNICA peça de roupa que acabou de chegar na loja.\n\nInstruções para a mensagem:\n\nTom e Voz: Use um tom empolgante, informal e direto. Seu público é jovem e ligado em moda urbana. Gírias são bem-vindas, mas sem exagerar.\n\nEstrutura: A mensagem será a legenda de uma foto. Comece com uma chamada que gere impacto e curiosidade (Ex: 'Alerta de novidade! 🚀', 'Acabou de chegar! 🔥', 'Prepare-se para essa pedrada!').\n\nFoco: Destaque o nome da peça e sua principal qualidade de forma a despertar o desejo do cliente.\n\nEmojis: Use 1 ou 2 emojis que combinem com a vibe do produto.\n\nRestrições: Seja breve (máximo 2-3 frases). NUNCA use emoticons de texto como ':)' ou '<3'."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        -48
+      ],
+      "id": "301a73bf-4918-4780-a874-4ed6598d724a",
+      "name": "Verificador de Produtos"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        384,
+        96
+      ],
+      "id": "725a1421-e1c6-430a-ad14-07d6ffbcef8d",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "uudgVexPy2IFFMaZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- ETAPA 1: Buscar os dados de TODOS os nós necessários ---\n\nconst listaDeUsuarios = $items();\n// O resultado é um array como: [{ json: { chatId: '652959090' } }, { json: { chatId: 'outroId' } }]\n\n// Pega as informações do produto, que são as mesmas para todos os usuários.\nconst textoDaIA = $('Verificador de Produtos').first().json.output;\nconst produto = $('Webhook').first().json.body;\n\n\n// --- ETAPA 2: Preparar a mensagem base (só precisa ser feito uma vez) ---\nconst precoFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(produto.preco);\nlet legendaFinal = `${textoDaIA}\\n\\n`;\nlegendaFinal += `<b>✨ Peça:</b> ${produto.nome}\\n`;\nlegendaFinal += `<b>💰 Preço:</b> ${precoFormatado}`;\n\n\n// --- ETAPA 3: Criar um item de envio para CADA usuário da lista ---\nconst itensParaEnvio = listaDeUsuarios.map(usuario => {\n  // Para cada 'usuario' na lista, criamos um objeto de envio.\n  return {\n    json: {\n      chat_id: usuario.json.chatId,\n      photo_url: produto.imagem_url,\n      caption: legendaFinal,\n      // Adicionamos o parse_mode para o HTML funcionar\n      options: {\n        parse_mode: 'HTML'\n      }\n    }\n  };\n});\n\n\n// --- ETAPA 4: Retornar o array com todos os itens prontos para envio ---\n// O n8n vai pegar esta lista e executar o próximo nó (Telegram) para cada item.\nreturn itensParaEnvio;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        -48
+      ],
+      "id": "9dffcb88-1f94-4b75-b54a-d5da7f502035",
+      "name": "Agrupar JSON"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Separador').item.json.chatId }}",
+        "file": "={{ $('Agrupar JSON').item.json.photo_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.caption }}",
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        -48
+      ],
+      "id": "321ab4e4-1214-4e8b-af12-9c0233650880",
+      "name": "Send a photo message1",
+      "webhookId": "b19db22a-3685-4d3c-ac36-fd678d8f7e93",
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Separador').item.json.chatId }}",
+        "text": "={{ $json.caption }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        -48
+      ],
+      "id": "13e5a4ae-8a86-4171-8dd5-54187959c947",
+      "name": "Enviar Mensagem de Atualização",
+      "webhookId": "f1dde3a1-6457-4cb1-bca1-cd987371ceab",
+      "retryOnFail": false,
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "F1XsbGDUdE1n66HV",
+          "name": "Telgram Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "=subscription:{{ $('Webhook').first().json.body.categoria }}:*"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -48
+      ],
+      "id": "b6b91d36-9f1e-4215-b65c-40c2fed809ef",
+      "name": "Buscar Assinantes da Categoria",
+      "credentials": {
+        "redis": {
+          "id": "6NTwK1kxYF9NeoE1",
+          "name": "Credencial_Redis_Local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// A entrada 'items' é a lista de objetos que o nó Redis encontrou.\nconst todosOsItens = items;\n\n// Usamos .map() para transformar cada item no chatId que precisamos.\nconst listaDeChatIds = todosOsItens.map(item => {\n  const chaveCompleta = Object.keys(item.json)[0]; // Ex: \"subscription:Camisetas:12345\"\n  \n  // Dividimos a string pelo caractere \":\"\n  const partesDaChave = chaveCompleta.split(':'); // Ex: [\"subscription\", \"Camisetas\", \"12345\"]\n  \n  // Pegamos o último elemento do array, que é o nosso chatId.\n  const chatId = partesDaChave.pop();\n  \n  // Retornamos o chatId no formato que o n8n espera para o próximo nó.\n  return {\n    json: {\n      chatId: chatId\n    }\n  };\n});\n\n// A saída deste nó será uma lista limpa de chatIds.\nreturn listaDeChatIds;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "2c692b3e-cef6-4d81-9e0f-5f5fbee3cf4f",
+      "name": "Separador"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chama todos Usuários": {
+      "main": [
+        []
+      ]
+    },
+    "Verificador de Produtos": {
+      "main": [
+        [
+          {
+            "node": "Agrupar JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Verificador de Produtos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agrupar JSON": {
+      "main": [
+        [
+          {
+            "node": "Enviar Mensagem de Atualização",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Mensagem de Atualização": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Buscar Assinantes da Categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Assinantes da Categoria": {
+      "main": [
+        [
+          {
+            "node": "Separador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Separador": {
+      "main": [
+        [
+          {
+            "node": "Verificador de Produtos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "55c47037-d24d-496a-a3e5-72582281c8f5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "44631d0647de0aaa5604bf85f80cdbc72ba3bba08c629494f91f6ce3dccc1ed5"
+  },
+  "id": "HwkXmr1VlxVlRXqq",
+  "tags": []
+}
